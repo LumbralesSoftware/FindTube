@@ -2,103 +2,17 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Esto es el mapa</title>
-
-    <script type="text/javascript" charset="utf-8">
-function loadTweets() {
-    var request = new XMLHttpRequest();
-    request.open("GET", "http://search.twitter.com/search.json?q=phonegap", true);
-    request.onreadystatechange = function() {//Call a function when the state changes.
-        if (request.readyState == 4) {
-            if (request.status == 200 || request.status == 0) {
-                var tweets = JSON.parse(request.responseText);
-                var data = "<table cellspacing='0'>";
-                var tableClass;
-                for (i = 0; i < tweets.results.length; i++) {
-                    if (i % 2 == 0) {
-                        tableClass = 'tweetOdd';
-                    }
-                    else {
-                        tableClass = 'tweetEven';
-                    }
-                    data += "<tr style='border: 1px solid black'>";
-                    data += "<td class='" + tableClass + "'>";
-                    data += "<img src='" + tweets.results[i].profile_image_url + "'/>";
-                    data += "</td>";
-                    data += "<td class='" + tableClass + "'>";
-                    data += "<b>" + tweets.results[i].from_user + "</b><br/>";
-                    data += tweets.results[i].text + "<br/>";
-                    data += tweets.results[i].created_at;
-                    data += "</td>";
-                    data += "</tr>";
-                }
-                data += "</table>";
-                var twitter = document.getElementById("latestTweets");
-                twitter.innerHTML = data;
-            }
-        }
-    }
-    console.log("asking for tweets");
-    request.send();
-}
-
-    // wait for device API libraries to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
-
-    // device APIs are available
-    //
-    function onDeviceReady() {
-        navigator.geolocation.getCurrentPosition(onSuccess, onError);
-    }
-
-    // Display `Position` properties from the geolocation
-    //
-    function onSuccess(position) {
-        document.getElementById("loading-image").style.display = "none";
-
-        var div = document.getElementById('myDiv');
-        var elapsedTime=0;
-var interval=setInterval(function(){timer()},100);
-
-
-        div.innerHTML = 'Latitude: '             + position.coords.latitude         + '<br/>' +
-                        'Longitude: '            + position.coords.longitude        + '<br/>';
-
-    }
-
-    // Show an alert if there is a problem getting the geolocation
-    //
-    function onError() {
-        alert('onError!');
-    }
-
-
-
-
-
-    </script>
+    <title>Map</title>
+    <link rel="stylesheet" type="text/css" href="css/map.css" />
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBn965xXnfdvHcv8QwmfDzq2rgQTx-DNGw&sensor=false"> </script>
+    <script type="text/javascript" charset="utf-8" src="js/map.js"></script>
 </head>
 <body>
-<div class="app">
-    <h1>Esto es el mapa</h1>
-
-</div>
-<div id="myDiv"></div>
-<div id="loading">
-    <img id="loading-image" src="http://cdn.nirmaltv.com/images/generatorphp-thumb.gif"
-         alt="Loading..."/>
-</div>
-<div id="latestTweets"></div>
-
-
+    <div id="map-canvas">
+        <div id="loading">
+            <img id="loading-image" src="img/loading.gif" alt="Loading..."/>
+        </div>
+    </div>
 <script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript" src="js/index.js"></script>
-<script type="text/javascript">
-            app.initialize();
-        loadTweets();
-
-
-</script>
 </body>
 </html>
