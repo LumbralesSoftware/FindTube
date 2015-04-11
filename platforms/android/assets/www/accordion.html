@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="pageone">
+    <div data-role="header">
+        <h1>Collapsible Blocks</h1>
+    </div>
+
+    <div data-role="main" class="ui-content">
+        <div id="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c">
+            <h3>Click me - I'm collapsible!</h3>
+            <ul id="list" data-role="listview" data-inset="false">
+            <li> I'm the expanded content </li>
+            <li>  I'm the expanded content </li>
+            </ul>
+        </div>
+    </div>
+
+<img id="loading-pdk" src="img/loading.gif" alt="Loading..." style="display: none;"><div></div><div class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c"></div><h3>Platform 1</h3><ul class="list" data-role="listview" data-inset="false"></ul><li>Platform 1: 2</li><li>Platform 1: 5</li><li>Platform 1: 12</li>
+
+
+    <div class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c">
+
+    </div><h3>Platform 2</h3><ul class="list" data-role="listview" data-inset="false"></ul><li>Platform 2: 3</li><li>Platform 2: 9</li><li>Platform 2: 13</li>
+
+
+
+    <div data-role="footer">
+        <h1>Insert Footer Text Here</h1>
+    </div>
+</div>
+<script>
+            $('#list').listview();
+            $('#collapsible').collapsible();
+</script>
+</body>
+</html>

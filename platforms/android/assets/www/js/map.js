@@ -1,6 +1,10 @@
 // wait for device API libraries to load
 document.addEventListener("deviceready", onDeviceReady, false);
 
+window.onorientationchange = function() {
+    var screen = $.mobile.getScreenHeight();
+    $('#map-canvas').height(screen);
+}
 
 // device APIs are available
 //
@@ -11,10 +15,21 @@ function onDeviceReady() {
 // Display `Position` properties from the geolocation
 //
 function onSuccess(position) {
+
+    var screen = $.mobile.getScreenHeight();
+    $('#map-canvas').height(screen);
+
+    var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     var map = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 20,
-        center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+        center: currentLocation,
         mapTypeId: google.maps.MapTypeId.TERRAIN
+    });
+    var image = 'img/location.gif';
+    var beachMarker = new google.maps.Marker({
+      position: currentLocation,
+      map: map,
+      icon: image
     });
 
     goToMyLocation(map, position.coords.latitude, position.coords.longitude);
@@ -33,33 +48,22 @@ function goToMyLocation(map, latitude, longitude) {
 
     // Set CSS for the control border
     var controlUI = document.createElement('div');
-    controlUI.style.backgroundColor = '#fff';
-    controlUI.style.border = '2px solid #fff';
-    controlUI.style.borderRadius = '3px';
-    controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
     controlUI.style.cursor = 'pointer';
     controlUI.style.marginBottom = '22px';
     controlUI.style.textAlign = 'center';
     controlUI.title = 'Click to recenter the map';
     controlDiv.appendChild(controlUI);
 
-    // Set CSS for the control interior
-    var controlText = document.createElement('div');
-    controlText.style.color = 'rgb(25,25,25)';
-    controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
-    controlText.style.fontSize = '16px';
-    controlText.style.lineHeight = '38px';
-    controlText.style.paddingLeft = '5px';
-    controlText.style.paddingRight = '5px';
+    var controlText = document.createElement('button');
+    controlText.setAttribute("class", "btn");
     controlText.innerHTML = 'My Location';
     controlUI.appendChild(controlText);
-
     // Setup the click event listeners: simply set the map to my location
     google.maps.event.addDomListener(controlUI, 'click', function() {
         map.setCenter(currentLocation)
     });
     controlDiv.index = 1;
-    map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(controlDiv);
+    map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(controlDiv);
 }
 
 function loadPoints(map, latitude, longitude) {
@@ -92,7 +96,7 @@ function loadPoints(map, latitude, longitude) {
                     google.maps.event.addListener(marker, 'click', (function(marker, i) {
                         return function() {
                             infowindow.setContent(
-                                '<h3>' + points.stations[i].name + '</h3> <div id="' + points.stations[i].station_code + '"><img id="loading-' + points.stations[i].station_code +'" src="img/loading.gif" alt="Loading..."/><div>'
+                                '<h3>' + points.stations[i].name + '</h3> <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"><img id="loading-' + points.stations[i].station_code +'" src="img/loading.gif" align="middle" alt="Loading..."/><div>'
                             );
                             infowindow.open(map, marker);
                             getInfoPoint(points.stations[i].station_code, points.stations[i].lines);
@@ -117,7 +121,7 @@ function getInfoPoint(station_code, lines) {
 
 function getInfoLine(station_code, line)
 {
-    var result = document.getElementById(station_code);
+    var result = $('#' + station_code);
     var request = new XMLHttpRequest();
     var stringHTTP = "http://transportapi.com/v3/uk/tube/" + line + "/" + station_code + "/live.json?app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734";
     request.open("GET", stringHTTP);
@@ -138,6 +142,17 @@ function getInfoLine(station_code, line)
 
                         var platform = lineInfo.platforms[platformName];
 
+                        var platformId =  platformName.toLowerCase()
+                                                 .replace(/ /g,'-')
+                                                 .replace(/[^\w-]+/g,'')
+                                                 ;
+                        console.log(platformId);
+                        result.append('<div id="' + platformId + '" class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c"></div>');
+                        var collapsible = $('#' + platformId);
+                        collapsible.append('<h3>' + platformName +'</h3>');
+
+                        collapsible.append('<ul id="' + platformId +'-ul" class="list" data-role="listview" data-inset="false"></ul>');
+                        var list = $('#' + platformId + '-ul');
                         for (j = 0; j < platform.departures.length; j++) {
                             if (j > 2) {
                                  break;
@@ -145,18 +160,18 @@ function getInfoLine(station_code, line)
                             var departure = platform.departures[j];
                             console.log(platformName);
                             console.log(departure.best_departure_estimate_mins);
-                            result.innerHTML += platformName + ": " + departure.best_departure_estimate_mins + "<br/>";
+                            list.append("<li>" + platformName + ": " + departure.best_departure_estimate_mins + "</li>");
 
-                            //var time = platform[i].departures[0].best_departure_estimate_mins;
                         }
-
                     }
                 }
-
-
+                console.log(result.html());
+                $('.list').listview();
+                $('.collapsible').collapsible();
             }
         }
     }
+
         console.log("asking for getInfoPoint");
         request.send();
 }
