@@ -33,5 +33,8 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
+        if (location.href.indexOf("error") > -1) {
+            alert('Unable to get your location, please check your GPS settings and retry.');
+        }
     },
 };

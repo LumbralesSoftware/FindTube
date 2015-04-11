@@ -9,7 +9,8 @@ window.onorientationchange = function() {
 // device APIs are available
 //
 function onDeviceReady() {
-    navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 }
 
 // Display `Position` properties from the geolocation
@@ -39,7 +40,8 @@ function onSuccess(position) {
 // Show an alert if there is a problem getting the geolocation
 //
 function onError() {
-    alert('onError!');
+    console.log('unable to get the current location');
+    location.href='index.html?error=yes';
 }
 
 function goToMyLocation(map, latitude, longitude) {
@@ -56,7 +58,7 @@ function goToMyLocation(map, latitude, longitude) {
 
     var controlText = document.createElement('button');
     controlText.setAttribute("class", "btn");
-    controlText.innerHTML = 'My Location';
+    controlText.innerHTML = 'MY LOCATION';
     controlUI.appendChild(controlText);
     // Setup the click event listeners: simply set the map to my location
     google.maps.event.addDomListener(controlUI, 'click', function() {
