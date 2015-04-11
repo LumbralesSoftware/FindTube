@@ -19,7 +19,7 @@
     specific language governing permissions and limitations
     under the License.
 -->
-<html>
+<html xmlns:http="http://www.w3.org/1999/xhtml">
     <head>
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
@@ -31,12 +31,19 @@
     </head>
     <body>
         <div class="app">
-            <h1>PhoneGap</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-                <a href="">About us</a>
-                <a href="map.html">Go to map</a>
+
+
+            <div id="deviceready" >
+
+                <a href="map.html">
+                    <button class="btn">GO TO MAP</button>
+                </a>
+                <a href="http://thedeveloperworldisyours.com/">
+                    <button class="btn">BLOG</button>
+                </a>
+                <a href="http://www.lumbrales-software.com/">
+                    <button class="btn">ABOUT US</button>
+                </a>
             </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
