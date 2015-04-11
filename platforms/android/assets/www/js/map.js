@@ -103,3 +103,28 @@
         console.log("asking for tube information");
         request.send();
     }
+    function getInfoPoint(station_name,station_code,lat,lon){
+        var stringHTTP = "http://transportapi.com/v3/uk/tube/"+station_name+"/"+station_code+"/live.json?lat="+lat+"&lon="+lon+"&&page=1&rpp=10&&app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734";
+        request.open("GET", stringHTTP);
+        request.onreadystatechange = function() {//Call a function when the state changes.
+                                                 if (request.readyState == 4) {
+                                                     if (request.status == 200 || request.status == 0) {
+                                                         var pointsInfo = JSON.parse(request.responseText);
+                                                         for(linea = 0;linea< pointsInfo.lineas.length;linea++){
+                                                         var lineaInfo = pointsInfo.linea[linea];
+                                                         for (i = 0; i < lineaInfo.platforms.length; i++) {
+                                                             var platform = pointsInfo.lines.platforms[i];
+                                                             for(j=0; j < platform.length; j++){
+                                                             var time = platform[i].departures[0].best_departure_estimate_mins;
+                                                             }
+
+                                                         }
+                                                         }
+
+
+                                                     }
+                                                 }
+                                             }
+                                             console.log("asking for getInfoPoint");
+                                             request.send();
+        }
