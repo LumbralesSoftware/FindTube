@@ -25,18 +25,6 @@ body {
     -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    background-color:#E4E4E4;
-    background-image:linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image:-webkit-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image:-ms-linear-gradient(top, #A7A7A7 0%, #E4E4E4 51%);
-    background-image:-webkit-gradient(
-        linear,
-        left top,
-        left bottom,
-        color-stop(0, #A7A7A7),
-        color-stop(0.51, #E4E4E4)
-    );
-    background-attachment:fixed;
     font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
     font-size:12px;
     height:100%;
@@ -60,13 +48,29 @@ body {
                                    /* offset horizontal: half of text area width */
 }
 
+#deviceready {
+    display: block
+}
+
 /* Landscape layout (with min-width) */
 @media screen and (min-aspect-ratio: 1/1) and (min-width:400px) {
     .app {
+        position:absolute;             /* position in the center of the screen */
+        left:0;
+        top:0;
+        min-height: 50%;
+        min-width: 60%;
         background-position:left center;
-        padding:75px 0px 75px 170px;  /* padding-top + padding-bottom + text area = image height */
-        margin:-90px 0px 0px -198px;  /* offset vertical: half of image height */
-                                      /* offset horizontal: half of image width and text area width */
+        /*         padding:75px 0px 75px 170px;   padding-top + padding-bottom + text area = image height */
+
+        margin: 0;  /* offset vertical: half of image height */
+        margin-left: 100px;
+                                   /* border: 1px solid; offset horizontal: half of image width and text area width */
+    }
+    #deviceready {
+        position:absolute;             /* position in the center of the screen */
+        left: 60%;
+        top:0;
     }
 }
 
@@ -124,9 +128,5 @@ h1 {
   padding: 10px 20px 10px 20px;
   margin: 30px 0px 0px 0px;
   text-decoration: none;
-}
-
-.btn:hover {
-  background: #db2421;
-  text-decoration: none;
+  margin-bottom: 5px;
 }
