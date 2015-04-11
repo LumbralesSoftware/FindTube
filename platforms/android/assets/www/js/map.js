@@ -1,14 +1,17 @@
 // wait for device API libraries to load
 document.addEventListener("deviceready", onDeviceReady, false);
-
-window.onorientationchange = function() {
+window.addEventListener('orientationchange', handleOrientation, false);
+function handleOrientation(change) {
+    console.log('moved!!!', change);
     var screen = $.mobile.getScreenHeight();
+    console.log(screen);
     $('#map-canvas').height(screen);
 }
 
 // device APIs are available
 //
 function onDeviceReady() {
+    handleOrientation();
     var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
     navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 }
