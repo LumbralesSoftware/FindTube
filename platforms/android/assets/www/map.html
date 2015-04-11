@@ -3,40 +3,44 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Esto es el mapa</title>
+
     <script type="text/javascript" charset="utf-8">
-
-    // Wait for device API libraries to load
-    //
-    document.addEventListener("deviceready", onDeviceReady, false);
-
-    var watchID = null;
-
-    // device APIs are available
-    //
-    function onDeviceReady() {
-        // Throw an error if no update is received every 30 seconds
-        var options = { timeout: 30000 };
-        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
-    }
-
-    // onSuccess Geolocation
-    //
-    function onSuccess(position) {
-        var element = document.getElementById('geolocation');
-        element.innerHTML = 'Latitude: '  + position.coords.latitude      + '<br />' +
-                            'Longitude: ' + position.coords.longitude     + '<br />' +
-                            '<hr />'      + element.innerHTML;
-    }
-
-        // onError Callback receives a PositionError object
-        //
-        function onError(error) {
-            alert('code: '    + error.code    + '\n' +
-                  'message: ' + error.message + '\n');
+function loadTweets() {
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://search.twitter.com/search.json?q=phonegap", true);
+    request.onreadystatechange = function() {//Call a function when the state changes.
+        if (request.readyState == 4) {
+            if (request.status == 200 || request.status == 0) {
+                var tweets = JSON.parse(request.responseText);
+                var data = "<table cellspacing='0'>";
+                var tableClass;
+                for (i = 0; i < tweets.results.length; i++) {
+                    if (i % 2 == 0) {
+                        tableClass = 'tweetOdd';
+                    }
+                    else {
+                        tableClass = 'tweetEven';
+                    }
+                    data += "<tr style='border: 1px solid black'>";
+                    data += "<td class='" + tableClass + "'>";
+                    data += "<img src='" + tweets.results[i].profile_image_url + "'/>";
+                    data += "</td>";
+                    data += "<td class='" + tableClass + "'>";
+                    data += "<b>" + tweets.results[i].from_user + "</b><br/>";
+                    data += tweets.results[i].text + "<br/>";
+                    data += tweets.results[i].created_at;
+                    data += "</td>";
+                    data += "</tr>";
+                }
+                data += "</table>";
+                var twitter = document.getElementById("latestTweets");
+                twitter.innerHTML = data;
+            }
         }
-
-    </script>
-    <script type="text/javascript" charset="utf-8">
+    }
+    console.log("asking for tweets");
+    request.send();
+}
 
     // wait for device API libraries to load
     //
@@ -51,15 +55,16 @@
     // Display `Position` properties from the geolocation
     //
     function onSuccess(position) {
+        document.getElementById("loading-image").style.display = "none";
+
         var div = document.getElementById('myDiv');
+        var elapsedTime=0;
+var interval=setInterval(function(){timer()},100);
+
 
         div.innerHTML = 'Latitude: '             + position.coords.latitude         + '<br/>' +
-                        'Longitude: '            + position.coords.longitude        + '<br/>' +
-                        'Altitude: '             + position.coords.altitude         + '<br/>' +
-                        'Accuracy: '             + position.coords.accuracy         + '<br/>' +
-                        'Altitude Accuracy: '    + position.coords.altitudeAccuracy + '<br/>' +
-                        'Heading: '              + position.coords.heading          + '<br/>' +
-                        'Speed: '                + position.coords.speed            + '<br/>';
+                        'Longitude: '            + position.coords.longitude        + '<br/>';
+
     }
 
     // Show an alert if there is a problem getting the geolocation
@@ -67,6 +72,9 @@
     function onError() {
         alert('onError!');
     }
+
+
+
 
 
     </script>
@@ -77,11 +85,20 @@
 
 </div>
 <div id="myDiv"></div>
+<div id="loading">
+    <img id="loading-image" src="http://cdn.nirmaltv.com/images/generatorphp-thumb.gif"
+         alt="Loading..."/>
+</div>
+<div id="latestTweets"></div>
+
 
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
 <script type="text/javascript">
             app.initialize();
-        </script>
+        loadTweets();
+
+
+</script>
 </body>
 </html>
