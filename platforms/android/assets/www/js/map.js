@@ -16,7 +16,9 @@
           center: new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
           mapTypeId: google.maps.MapTypeId.TERRAIN
         });
-        loadPoints();
+
+        goToMyLocation(map, position.coords.latitude, position.coords.longitude);
+        loadPoints(map, position.coords.latitude, position.coords.longitude);
     }
 
     // Show an alert if there is a problem getting the geolocation
@@ -24,27 +26,80 @@
     function onError() {
         alert('onError!');
     }
-    function loadPoints() {
+
+    function goToMyLocation(map, latitude, longitude)
+    {
+      var controlDiv = document.createElement('div');
+      var currentLocation = new google.maps.LatLng(latitude, longitude);
+
+     // Set CSS for the control border
+      var controlUI = document.createElement('div');
+      controlUI.style.backgroundColor = '#fff';
+      controlUI.style.border = '2px solid #fff';
+      controlUI.style.borderRadius = '3px';
+      controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+      controlUI.style.cursor = 'pointer';
+      controlUI.style.marginBottom = '22px';
+      controlUI.style.textAlign = 'center';
+      controlUI.title = 'Click to recenter the map';
+      controlDiv.appendChild(controlUI);
+
+      // Set CSS for the control interior
+      var controlText = document.createElement('div');
+      controlText.style.color = 'rgb(25,25,25)';
+      controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+      controlText.style.fontSize = '16px';
+      controlText.style.lineHeight = '38px';
+      controlText.style.paddingLeft = '5px';
+      controlText.style.paddingRight = '5px';
+      controlText.innerHTML = 'My Location';
+      controlUI.appendChild(controlText);
+
+      // Setup the click event listeners: simply set the map to my location
+      google.maps.event.addDomListener(controlUI, 'click', function() {
+        map.setCenter(currentLocation)
+      });
+      controlDiv.index = 1;
+      map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(controlDiv);
+    }
+    function loadPoints(map, latitude, longitude) {
         var request = new XMLHttpRequest();
-        request.open("GET", "http://transportapi.com/v3/uk/tube/stations/near.json?lat=51.527789&lon=-0.102323&&page=1&rpp=10&&app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734", true);
+        request.open("GET", "http://transportapi.com/v3/uk/tube/stations/near.json?lat=" + latitude + "&lon=" + longitude + "&page=1&rpp=10&&app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734", true);
         request.onreadystatechange = function() {//Call a function when the state changes.
             if (request.readyState == 4) {
                 if (request.status == 200 || request.status == 0) {
+
                     var points = JSON.parse(request.responseText);
-                    var show = document.getElementById("latestTweets");
-                                        show.innerHTML = points;
+                    var marker,
+                        myLatlng,
+                        i,
+                        infowindow = new google.maps.InfoWindow();
+
                     for (i = 0; i < points.stations.length; i++) {
-                        points[i].longitude;
-                        points[i].latitude;
-                       alert( points[i].name);
+                        console.log(points.stations[i].name);
 
+                        myLatlng = new google.maps.LatLng(
+                            points.stations[i].latitude,
+                            points.stations[i].longitude
+                        );
+
+                        marker = new google.maps.Marker({
+                              position: myLatlng,
+                              map: map,
+                              title: points.stations[i].name
+                          });
+
+                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                            return function() {
+                                infowindow.setContent(points.stations[i].name);
+                                infowindow.open(map, marker);
+                            }
+                          })(marker, i)
+                        );
                     }
-
-
-
                 }
             }
         }
-        console.log("asking for tweets");
+        console.log("asking for tube information");
         request.send();
     }
