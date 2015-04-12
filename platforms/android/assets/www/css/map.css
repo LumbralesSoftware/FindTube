@@ -20,22 +20,6 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 
-html {
-    height: 100% !important;
-}
-body {
-    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
-    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
-    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
-    font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
-    font-size:12px;
-    height:100% !important;;
-    margin:0px;
-    padding:0px;
-    text-transform:uppercase;
-    width:100% !important;;
-}
-
 #loading {
     position:absolute;             /* position in the center of the screen */
     left:0;
@@ -44,9 +28,20 @@ body {
     text-align:center;
 }
 
-#map-canvas {
-    min-height: 99%;
-    min-width: 99%;
+
+html,
+body,
+#pageID {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+.ui-content {
+  padding: 0;
+}
+.ui-content,
+.ui-content #full-height {
+  height: inherit; /* the trick */
 }
 
 h1 {

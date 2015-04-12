@@ -1,39 +1,31 @@
 // wait for device API libraries to load
 document.addEventListener("deviceready", onDeviceReady, false);
-window.addEventListener('orientationchange', handleOrientation, false);
-function handleOrientation(change) {
-    console.log('moved!!!', change);
-    var screen = $.mobile.getScreenHeight();
-    console.log(screen);
-    $('#map-canvas').height(screen);
-}
 
 // device APIs are available
 //
 function onDeviceReady() {
-    handleOrientation();
-    var options = {maximumAge: 0, timeout: 10000, enableHighAccuracy:true};
+    var options = {
+        maximumAge: 0,
+        timeout: 10000,
+        enableHighAccuracy: true
+    };
     navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
 }
 
 // Display `Position` properties from the geolocation
-//
 function onSuccess(position) {
 
-    var screen = $.mobile.getScreenHeight();
-    $('#map-canvas').height(screen);
-
     var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+    var map = new google.maps.Map(document.getElementById('full-height'), {
         zoom: 20,
         center: currentLocation,
         mapTypeId: google.maps.MapTypeId.TERRAIN
     });
     var image = 'img/location.gif';
     var beachMarker = new google.maps.Marker({
-      position: currentLocation,
-      map: map,
-      icon: image
+        position: currentLocation,
+        map: map,
+        icon: image
     });
 
     goToMyLocation(map, position.coords.latitude, position.coords.longitude);
@@ -43,8 +35,8 @@ function onSuccess(position) {
 // Show an alert if there is a problem getting the geolocation
 //
 function onError() {
-    console.log('unable to get the current location');
-    location.href='index.html?error=yes';
+    //console.log('unable to get the current location');
+    location.href = 'index.html?error=yes';
 }
 
 function goToMyLocation(map, latitude, longitude) {
@@ -75,57 +67,56 @@ function loadPoints(map, latitude, longitude) {
     var request = new XMLHttpRequest();
     request.open("GET", "http://transportapi.com/v3/uk/tube/stations/near.json?lat=" + latitude + "&lon=" + longitude + "&page=1&rpp=10&&app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734", true);
     request.onreadystatechange = function() { //Call a function when the state changes.
-        if (request.readyState == 4) {
-            if (request.status == 200 || request.status == 0) {
+            if (request.readyState == 4) {
+                if (request.status == 200 || request.status == 0) {
 
-                var points = JSON.parse(request.responseText);
-                var marker,
-                    myLatlng,
-                    i,
-                    infowindow = new google.maps.InfoWindow();
+                    var points = JSON.parse(request.responseText);
+                    var marker,
+                        myLatlng,
+                        i,
+                        infowindow = new google.maps.InfoWindow();
 
-                for (i = 0; i < points.stations.length; i++) {
-                    console.log(points.stations[i].name);
+                    for (i = 0; i < points.stations.length; i++) {
+                        //console.log(points.stations[i].name);
 
-                    myLatlng = new google.maps.LatLng(
-                        points.stations[i].latitude,
-                        points.stations[i].longitude
-                    );
+                        myLatlng = new google.maps.LatLng(
+                            points.stations[i].latitude,
+                            points.stations[i].longitude
+                        );
 
-                    marker = new google.maps.Marker({
-                        position: myLatlng,
-                        map: map,
-                        title: points.stations[i].name
-                    });
+                        marker = new google.maps.Marker({
+                            position: myLatlng,
+                            map: map,
+                            title: points.stations[i].name
+                        });
 
-                    google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                        return function() {
-                            infowindow.setContent(
-                                '<h3>' + points.stations[i].name + '</h3> <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"><img id="loading-' + points.stations[i].station_code +'" src="img/loading.gif" align="middle" alt="Loading..."/><div>'
-                            );
-                            infowindow.open(map, marker);
-                            getInfoPoint(points.stations[i].station_code, points.stations[i].lines);
-                        }
-                    })(marker, i));
+                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                            return function() {
+                                infowindow.setContent(
+                                    '<h3>' + points.stations[i].name + '</h3> <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"><img id="loading-' + points.stations[i].station_code + '" src="img/loading.gif" align="middle" alt="Loading..."/><div>'
+                                );
+                                infowindow.open(map, marker);
+                                getInfoPoint(points.stations[i].station_code, points.stations[i].lines);
+                            }
+                        })(marker, i));
+                    }
                 }
             }
         }
-    }
-    console.log("asking for tube information");
+        //console.log("asking for tube information");
     request.send();
 }
 
 function getInfoPoint(station_code, lines) {
 
     for (var line in lines) {
-        console.log('getting info of ' + lines[line]);
+        //console.log('getting info of ' + lines[line]);
         getInfoLine(station_code, lines[line]);
     }
 
 }
 
-function getInfoLine(station_code, line)
-{
+function getInfoLine(station_code, line) {
     var result = $('#' + station_code);
     var request = new XMLHttpRequest();
     var stringHTTP = "http://transportapi.com/v3/uk/tube/" + line + "/" + station_code + "/live.json?app_id=e7198ca5&api_key=08056cfd96db1080b221b4668e9e5734";
@@ -147,36 +138,35 @@ function getInfoLine(station_code, line)
 
                         var platform = lineInfo.platforms[platformName];
 
-                        var platformId =  platformName.toLowerCase()
-                                                 .replace(/ /g,'-')
-                                                 .replace(/[^\w-]+/g,'')
-                                                 ;
-                        console.log(platformId);
+                        var platformId = platformName.toLowerCase()
+                            .replace(/ /g, '-')
+                            .replace(/[^\w-]+/g, '');
+                        //console.log(platformId);
                         result.append('<div id="' + platformId + '" class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c"></div>');
                         var collapsible = $('#' + platformId);
-                        collapsible.append('<h3>' + platformName +'</h3>');
+                        collapsible.append('<h3>' + platformName + '</h3>');
 
-                        collapsible.append('<ul id="' + platformId +'-ul" class="list" data-role="listview" data-inset="false"></ul>');
+                        collapsible.append('<ul id="' + platformId + '-ul" class="list" data-role="listview" data-inset="false"></ul>');
                         var list = $('#' + platformId + '-ul');
                         for (j = 0; j < platform.departures.length; j++) {
                             if (j > 2) {
-                                 break;
+                                break;
                             }
                             var departure = platform.departures[j];
-                            console.log(platformName);
-                            console.log(departure.best_departure_estimate_mins);
-                            list.append("<li>" + platformName + ": " + departure.best_departure_estimate_mins + "</li>");
+                            //console.log(platformName);
+                            //console.log(departure.best_departure_estimate_mins);
+                            list.append("<li><span style='text-transform: uppercase;'>" + platformName + "</span>: " + departure.best_departure_estimate_mins + " min </li>");
 
                         }
                     }
                 }
-                console.log(result.html());
+                //console.log(result.html());
                 $('.list').listview();
                 $('.collapsible').collapsible();
             }
         }
     }
 
-        console.log("asking for getInfoPoint");
-        request.send();
+    //console.log("asking for getInfoPoint");
+    request.send();
 }
