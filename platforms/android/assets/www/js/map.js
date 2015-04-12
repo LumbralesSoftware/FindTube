@@ -145,7 +145,6 @@ function getInfoLine(station_code, line) {
                         result.append('<div id="' + platformId + '" class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c"></div>');
                         var collapsible = $('#' + platformId);
                         collapsible.append('<h3>' + line +' ('+ platformName +')</h3>');
-
                         collapsible.append('<h4>' + platformName + '</h4>');
 
                         collapsible.append('<ul id="' + platformId + '-ul" class="list" data-role="listview" data-inset="false"></ul>');
@@ -157,7 +156,7 @@ function getInfoLine(station_code, line) {
                             var departure = platform.departures[j];
                             //console.log(platformName);
                             //console.log(departure.best_departure_estimate_mins);
-                            list.append("<li><span style='text-transform: uppercase;'> </span> Next ("+departure.destination_name+") in:<b> " + departure.best_departure_estimate_mins + " min.</b> </li>");
+                            list.append("<li><span style='text-transform: uppercase;'> </span> To "+departure.destination_name+" in <strong> " + departure.best_departure_estimate_mins + " min.</strong> </li>");
 
                         }
                     }
