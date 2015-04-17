@@ -3,3 +3,4 @@ out
 .idea
 plugins
 platforms/android/android.apk
+platforms/android/src/org/apache/cordova/networkinformation/
