@@ -54,16 +54,17 @@ api.loadPoints = function (map, latitude, longitude) {
 }
 api.saveString = function(station){
     var jsonStation = jQuery.parseJSON(unescape(station));
-    var savedFavourites = jQuery.parseJSON(window.localStorage.getItem("favourites"));
-    if (!jQuery.isArray(savedFavourites)) {
-        savedFavourites = [];
+    if(!api.favoriteCheck(jsonStation.station_code)){
+        var savedFavourites = jQuery.parseJSON(window.localStorage.getItem("favourites"));
+        if (!jQuery.isArray(savedFavourites)) {
+            savedFavourites = [];
+        }
+        var stationData = {"name": jsonStation.name, "code": jsonStation.station_code, "lines": jsonStation.lines};
+        console.log(JSON.stringify(stationData));
+        savedFavourites.push(stationData);
+        window.localStorage.setItem("favourites", JSON.stringify(savedFavourites));
+        console.log(JSON.stringify(savedFavourites));
     }
-    var stationData = {"name": jsonStation.name, "code": jsonStation.station_code, "lines": jsonStation.lines};
-    console.log(JSON.stringify(stationData));
-    savedFavourites.push(stationData);
-    window.localStorage.setItem("favourites", JSON.stringify(savedFavourites));
-    console.log(JSON.stringify(savedFavourites));
-
 }
 
 
@@ -130,4 +131,15 @@ api.getInfoLine = function (station_code, line) {
 
     //console.log("asking for getInfoPoint");
     request.send();
+}
+api.favoriteCheck = function(stationName){
+    var result = $('#favourites');
+    var favourites = window.localStorage.getItem("favourites");
+    var obj = jQuery.parseJSON(favourites);
+    for (var station in obj) {
+        if(stationName==obj[station].code){
+            return true;
+        }
+    }
+    return false;
 }
