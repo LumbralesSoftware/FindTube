@@ -6,7 +6,11 @@ var mapNs = {
             timeout: 10000,
             enableHighAccuracy: true
         };
-        navigator.geolocation.getCurrentPosition(mapNs.onSuccess, mapNs.onError, options);
+        if (api.checkOnline()) {
+            navigator.geolocation.getCurrentPosition(mapNs.onSuccess, mapNs.onError, options);
+        } else {
+            location.href = 'index.html';
+        }
     },
 
     // Display `Position` properties from the geolocation
