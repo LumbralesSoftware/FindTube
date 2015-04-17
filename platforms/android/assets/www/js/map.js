@@ -146,6 +146,7 @@ function getInfoLine(station_code, line) {
                         var collapsible = $('#' + platformId);
                         collapsible.append('<h3>' + line +' ('+ platformName +')</h3>');
                         collapsible.append('<h4>' + platformName + '</h4>');
+                        collapsible.append('<button onclick="myFavorite()"type="button">Favorite</button>');
 
                         collapsible.append('<ul id="' + platformId + '-ul" class="list" data-role="listview" data-inset="false"></ul>');
                         var list = $('#' + platformId + '-ul');
@@ -170,4 +171,8 @@ function getInfoLine(station_code, line) {
 
     //console.log("asking for getInfoPoint");
     request.send();
+
+    function myFavorite(){
+    var storage = window.localStorage.setItem("Favorit", "value");
+    }
 }
