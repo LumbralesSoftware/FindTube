@@ -3,7 +3,10 @@ var api = api || {};
 api.apiKey = "08056cfd96db1080b221b4668e9e5734";
 api.appId = "e7198ca5";
 
-api.loadPoints = function (map, latitude, longitude) {
+api.loadPoints = function(map, latitude, longitude) {
+    if (!api.checkOnline()) {
+        return false;
+    }
     var request = new XMLHttpRequest();
     request.open("GET", "http://transportapi.com/v3/uk/tube/stations/near.json?lat=" + latitude + "&lon=" + longitude + "&page=1&rpp=10&app_id=" + this.appId + "&api_key=" + this.apiKey, true);
     request.onreadystatechange = function() { //Call a function when the state changes.
@@ -35,10 +38,10 @@ api.loadPoints = function (map, latitude, longitude) {
                                 infowindow.setContent(
                                     '<h3>' + points.stations[i].name + '</h3> \
                                     <a onclick="api.saveString(\'' + escape(JSON.stringify(points.stations[i])) + '\')"> \
-                                    <button>My favorite</button> \
+                                    <div class="favourite"><button>ADD TO FAVOURITES</button></div> \
                                     </a>\
                                     <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"> \
-                                    <img id="loading-' + points.stations[i].station_code + '" src="img/loading.gif" align="middle" alt="Loading..."/> \
+                                    <img id="loading-' + points.stations[i].station_code + '" src="img/loading.gif" align="middle" alt="Loading..." style="margin-top:5px"/> \
                                     <div>'
                                 );
                                 infowindow.open(map, marker);
@@ -52,18 +55,21 @@ api.loadPoints = function (map, latitude, longitude) {
         //console.log("asking for tube information");
     request.send();
 }
-api.saveString = function(station){
+api.saveString = function(station) {
     var jsonStation = jQuery.parseJSON(unescape(station));
-    if(!api.favoriteCheck(jsonStation.station_code)){
+    if (!api.favoriteCheck(jsonStation.station_code)) {
         var savedFavourites = jQuery.parseJSON(window.localStorage.getItem("favourites"));
         if (!jQuery.isArray(savedFavourites)) {
             savedFavourites = [];
         }
-        var stationData = {"name": jsonStation.name, "code": jsonStation.station_code, "lines": jsonStation.lines};
-        console.log(JSON.stringify(stationData));
+        var stationData = {
+            "name": jsonStation.name,
+            "code": jsonStation.station_code,
+            "lines": jsonStation.lines
+        };
+        //console.log(JSON.stringify(stationData));
         savedFavourites.push(stationData);
         window.localStorage.setItem("favourites", JSON.stringify(savedFavourites));
-        console.log(JSON.stringify(savedFavourites));
     }
 }
 
@@ -71,13 +77,16 @@ api.saveString = function(station){
 api.getInfoPoint = function(station_code, lines) {
 
     for (var line in lines) {
-        console.log('getting info of ' + lines[line]);
+        //console.log('getting info of ' + lines[line]);
         this.getInfoLine(station_code, lines[line]);
     }
 
 }
 
-api.getInfoLine = function (station_code, line) {
+api.getInfoLine = function(station_code, line) {
+    if (!api.checkOnline()) {
+        return false;
+    }
     var result = $('#' + station_code);
     var request = new XMLHttpRequest();
     var stringHTTP = "http://transportapi.com/v3/uk/tube/" + line + "/" + station_code + "/live.json?app_id=" + this.appId + "&api_key=" + this.apiKey;
@@ -99,13 +108,13 @@ api.getInfoLine = function (station_code, line) {
 
                         var platform = lineInfo.platforms[platformName];
 
-                        var platformId = platformName.toLowerCase()
+                        var platformId = station_code + '-' + platformName.toLowerCase()
                             .replace(/ /g, '-')
                             .replace(/[^\w-]+/g, '');
                         //console.log(platformId);
                         result.append('<div id="' + platformId + '" class="collapsible" data-role="collapsible" data-collapsed="true" data-theme="c" data-content-theme="c"></div>');
                         var collapsible = $('#' + platformId);
-                        collapsible.append('<h3>' + line +' ('+ platformName +')</h3>');
+                        collapsible.append('<h3>' + line + ' (' + platformName + ')</h3>');
                         collapsible.append('<h4>' + platformName + '</h4>');
 
                         collapsible.append('<ul id="' + platformId + '-ul" class="list" data-role="listview" data-inset="false"></ul>');
@@ -117,7 +126,7 @@ api.getInfoLine = function (station_code, line) {
                             var departure = platform.departures[j];
                             //console.log(platformName);
                             //console.log(departure.best_departure_estimate_mins);
-                            list.append("<li><span style='text-transform: uppercase;'> </span> To "+departure.destination_name+" in <strong> " + departure.best_departure_estimate_mins + " min.</strong> </li>");
+                            list.append("<li><span style='text-transform: uppercase;'> </span> To " + departure.destination_name + " in <strong> " + departure.best_departure_estimate_mins + " min.</strong> </li>");
 
                         }
                     }
@@ -132,14 +141,21 @@ api.getInfoLine = function (station_code, line) {
     //console.log("asking for getInfoPoint");
     request.send();
 }
-api.favoriteCheck = function(stationName){
+api.favoriteCheck = function(stationName) {
     var result = $('#favourites');
     var favourites = window.localStorage.getItem("favourites");
     var obj = jQuery.parseJSON(favourites);
     for (var station in obj) {
-        if(stationName==obj[station].code){
+        if (stationName == obj[station].code) {
             return true;
         }
     }
     return false;
+}
+api.checkOnline = function() {
+    if (navigator.connection.type == window.Connection.NONE) {
+        alert('Please, check your internet connection and retry.');
+        return false;
+    }
+    return true;
 }

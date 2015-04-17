@@ -71,4 +71,7 @@
         <param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
     </feature>
     <access origin="*" />
+    <feature name="NetworkStatus">
+        <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
+    </feature>
 </widget>
