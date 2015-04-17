@@ -52,7 +52,10 @@ h1 {
     padding:0px;
     text-align:center;
 }
-
+h3 {
+    margin:0px;
+    padding:0px;
+}
 .event {
     border-radius:4px;
     -webkit-border-radius:4px;
@@ -100,7 +103,7 @@ h1 {
   color: #ffffff;
   font-size: 20px;
   padding: 10px 20px 10px 20px;
-  margin: 30px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
   text-decoration: none;
 }
 

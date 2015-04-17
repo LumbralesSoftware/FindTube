@@ -33,7 +33,13 @@ api.loadPoints = function (map, latitude, longitude) {
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
                             return function() {
                                 infowindow.setContent(
-                                    '<h3>' + points.stations[i].name + '</h3> <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"><img id="loading-' + points.stations[i].station_code + '" src="img/loading.gif" align="middle" alt="Loading..."/><div>'
+                                    '<h3>' + points.stations[i].name + '</h3> \
+                                    <a onclick="api.saveString(\'' + escape(JSON.stringify(points.stations[i])) + '\')"> \
+                                    <button>My favorite</button> \
+                                    </a>\
+                                    <div id="' + points.stations[i].station_code + '" style="width:100%;text-align:center"> \
+                                    <img id="loading-' + points.stations[i].station_code + '" src="img/loading.gif" align="middle" alt="Loading..."/> \
+                                    <div>'
                                 );
                                 infowindow.open(map, marker);
                                 api.getInfoPoint(points.stations[i].station_code, points.stations[i].lines);
@@ -46,6 +52,20 @@ api.loadPoints = function (map, latitude, longitude) {
         //console.log("asking for tube information");
     request.send();
 }
+api.saveString = function(station){
+    var jsonStation = jQuery.parseJSON(unescape(station));
+    var savedFavourites = jQuery.parseJSON(window.localStorage.getItem("favourites"));
+    if (!jQuery.isArray(savedFavourites)) {
+        savedFavourites = [];
+    }
+    var stationData = {"name": jsonStation.name, "code": jsonStation.station_code, "lines": jsonStation.lines};
+    console.log(JSON.stringify(stationData));
+    savedFavourites.push(stationData);
+    window.localStorage.setItem("favourites", JSON.stringify(savedFavourites));
+    console.log(JSON.stringify(savedFavourites));
+
+}
+
 
 api.getInfoPoint = function(station_code, lines) {
 
